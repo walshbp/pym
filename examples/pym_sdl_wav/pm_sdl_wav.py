@@ -28,8 +28,7 @@ class WavSound(object):
         self._bufpos = 0
 
         self.pcm = pcm
-        self.want_spec = SDL_AudioSpec(freq = 48000, aformat = AUDIO_F32,channels = 2, samples = 512)
-        #self.want_spec = SDL_AudioSpec(freq = 0 ,aformat = 0,channels = 0, samples = 0)
+        self.want_spec = SDL_AudioSpec(freq = 48000, aformat = AUDIO_S16,channels = 2, samples = 512)
         self.have_spec = SDL_AudioSpec(freq = 0 ,aformat = 0,channels = 0, samples = 0)
         
         self.done = False
@@ -42,11 +41,21 @@ class WavSound(object):
     def _load_file(self, file):
         rw = SDL_RWFromFile(byteify(file, "utf-8"), b"rb")
         sp = SDL_LoadWAV_RW(rw, 1, ctypes.byref(self.want_spec), ctypes.byref(self._buf), ctypes.byref(self._length))
+        # print ("want.freq: %d" % self.want_spec.freq)
+        # print ("want.is bytesize: %d" % SDL_AUDIO_BITSIZE(self.want_spec.format))
+        # print ("want.is is big endian: %d" % SDL_AUDIO_ISBIGENDIAN(self.want_spec.format))
+        # print ("want.is int: %d" % SDL_AUDIO_ISINT(self.want_spec.format))
+        # print ("want.is signed: %d" % SDL_AUDIO_ISSIGNED(self.want_spec.format))
+        # print ("want.aformat1: %d" % self.want_spec.format)
+        # print ("want.aformat2: %d" % AUDIO_S16)
+        # print ("want.channels: %d" % self.want_spec.channels)
+        # print ("want.samples: %d" % self.want_spec.samples)
         if sp is None:
             raise RuntimeError("Could not open audio file: {}".format(SDL_GetError()))
+        if self.want_spec.format != AUDIO_S16:
+            raise RuntimeError("Unable to get Int16 audio format !")
  
     def _play_next(self, notused, stream, len):
-        #print("In Callback %d " % len)
         length = self._length.value
         numbytes = min(len, length - self._bufpos)
         for i in range(0, numbytes):
@@ -57,10 +66,11 @@ class WavSound(object):
         rest = min(0, len - numbytes)
         for i in range(0, rest):
             stream[i] = 0
- 
+        
         # Are we done playing sound?
         if self._bufpos == length:
             self.done = True
+            self._bufpos = 0
 
         #
         # https://stackoverflow.com/questions/4355524/getting-data-from-ctypes-array-into-numpy
@@ -68,11 +78,11 @@ class WavSound(object):
 
         buffer_from_memory = ctypes.pythonapi.PyMemoryView_FromMemory
         buffer_from_memory.restype = ctypes.py_object
-        buffer = buffer_from_memory(stream, len, PyBUF_WRITE)
-        stream_out = numpy.frombuffer(buffer, numpy.float32)
-        #for i in range(10):
-        #    print("Data2 %f" % stream_out[i])
-        self.pcm.addPCMfloat(stream_out)
+        buffer = buffer_from_memory(stream, min(2048,len/2), PyBUF_WRITE)
+
+        stream_out = numpy.frombuffer(buffer, numpy.int16)
+
+        self.pcm.addPCM16Data(stream_out)
 
 
 class PmSdl(object):    
@@ -101,7 +111,7 @@ class PmSdl(object):
             raise RuntimeError("Unable to open audio device: {}".format(SDL_GetError()))
 
         if self.sound.want_spec.format != self.sound.have_spec.format:
-            raise RuntimeError("Unable to get Float32 audio: {}".format(SDL_GetError()))
+            raise RuntimeError("Unable to get Int16 audio: {}".format(SDL_GetError()))
         print ("Format {}".format(self.sound.have_spec.format))
         SDL_PauseAudioDevice(self.devid, 0)
         

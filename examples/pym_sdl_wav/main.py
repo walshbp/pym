@@ -45,7 +45,8 @@ def main():
     settings.shuffleEnabled = 1
     settings.softCutRatingsEnabled = 1
     base_path = ""
-    settings.presetURL = base_path + "/home/bryan/projectm/src/projectM-sdl/presets/presets_milkdrop_200/";
+    settings.presetURL = base_path + "/home/bryan//projectm_install/share/projectM/presets/"
+    #settings.presetURL = base_path + "/home/bryan/projectm/src/projectM-sdl/presets/presets_milkdrop_200/";
     settings.menuFontURL = base_path + "fonts/Vera.ttf";
     settings.titleFontURL = base_path + "fonts/Vera.ttf";
 
@@ -53,7 +54,7 @@ def main():
     app.init(window, render)
     
     # get an audio input device
-    app.play_audio("Firefly.wav")
+    app.play_audio("Daniel_Birch_-_08_-_The_Elevator_Game.wav")
     
     # standard main loop
     frame_delay = 1000/FPS;

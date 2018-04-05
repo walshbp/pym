@@ -621,6 +621,9 @@ cdef class PCM:
     #    self.c_instance.addPCM16(pcm16);
 
     def addPCM16Data(self, short[::1] pcm_data) :
+        #print("Len %d" %len(pcm_data))
+        #for i in range(10):
+        #    print("Data %f" % pcm_data[i])
         self.c_instance.addPCM16Data(&pcm_data[0], len(pcm_data))
 
     #def addPCM8(self, unsigned char [:,:] pcm8):
