@@ -51,8 +51,7 @@ A couple of examples are included in the exmaples directory. For both of them us
 python examples/pym_sdl/main.py
 ```
 
-"pym_sdl_wav" can be used to playback a wav file.  
-I do not think that we are correctly feeding the wav to the visualizer for this example.  Please let me know if you have any ideas here. To run:
+"pym_sdl_wav" can be used to playback a wav file.  To run:
 
 
 ```
