@@ -28,7 +28,7 @@ cp libprojectm_src/src/libprojectM/Common.hpp libprojectm_install/include
 cp libprojectm_src/src/libprojectM/dlldefs.h libprojectm_install/include
 cp libprojectm_src/src/libprojectM/event.h libprojectm_install/include
 cp libprojectm_src/src/libprojectM/fatal.h libprojectm_install/include
-cp libprojectm_src/src/libprojectM/PCM.h libprojectm_install/include
+cp libprojectm_src/src/libprojectM/PCM.hpp libprojectm_install/include
 ```
 
 ### Installing
